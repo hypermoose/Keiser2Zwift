@@ -1,0 +1,17 @@
+{
+  "name": "keiser2zwift",
+  "version": "1.0.0",
+  "description": "Adapter for Keiser m3i bikes to Zwift",
+  "main": "index.js",
+  "scripts": {
+    "debug": "node --nolazy --inspect-brk=9229 index.js",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@abandonware/bleno": "^0.5.1-2",
+    "@abandonware/noble": "^1.9.2-9",
+    "atob": "^2.1.2"
+  }
+}
