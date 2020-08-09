@@ -1,5 +1,6 @@
 // Setup multi role support and two different adapters for Peripheral and Central
 process.env['NOBLE_MULTI_ROLE'] = 1
+process.env['NOBLE_REPORT_ALL_HCI_EVENTS'] = 1
 process.env['BLENO_HCI_DEVICE_ID'] = 0
 process.env['NOBLE_HCI_DEVICE_ID'] = 1
 
@@ -7,32 +8,11 @@ const noble = require('@abandonware/noble');
 const keiserParser = require('./keiserParser.js')
 const KeiserBLE = require('./BLE/keiserBLE')
 
+var fillInTimer = null;
+var dataToSend = null;
+var someoneConnected = false;
+
 console.log("Starting");
-
-noble.on('stateChange', async (state) => {
-    console.log(`[Central] State changed to ${state}`);
-    if (state === 'poweredOn') {
-    	console.log(`[Central] starting scan`);
-        await noble.startScanningAsync(null, true);
-    }
-});
-
-noble.on('discover', (peripheral) => {
-
-   	//console.log(`[Central] Found device ${peripheral.advertisement.localName} ${peripheral.address}`); 
-	if (peripheral.advertisement.localName == "M3") 
-	{
-        try
-        {
-            console.log(`[Central] Found M3 device ${peripheral.advertisement.localName} ${peripheral.address}`); 
-            var result = keiserParser.parseAdvertisement(peripheral);
-			console.log(`\t${result.buildMajor}.${result.buildMinor} ${result.ordinalId} ${result.realTime} ${result.cadence} ${result.power} ${result.gear} ${result.duration}`); 
-        } 
-        catch { 
-            console.log("\tError parsing")
-        }
-    }
-});
 
 var keiserBLE = new KeiserBLE(serverCallback);
 
@@ -40,9 +20,11 @@ keiserBLE.on('advertisingStart', (client) => {
 	//oled.displayBLE('Started');
 });
 keiserBLE.on('accept', (client) => {
+	someoneConnected = true;
 	//oled.displayBLE('Connected');
 });
 keiserBLE.on('disconnect', (client) => {
+	someoneConnected = false;
 	//oled.displayBLE('Disconnected');
 });
 
@@ -85,3 +67,57 @@ function serverCallback(message, ...args) {
 	}
 	return success;
 };
+
+noble.on('stateChange', async (state) => {
+    console.log(`[Central] State changed to ${state}`);
+    if (state === 'poweredOn') {
+    	console.log(`[Central] starting scan`);
+        await noble.startScanningAsync(null, true);
+    }
+});
+
+function sendFillInData() {
+	if (!dataToSend || !someoneConnected) {
+		console.log("Aborting nothing to send");
+	}
+
+	console.log("Sending fill in data");
+	keiserBLE.notifyFTMS(dataToSend);
+	fillInTimer = setTimeout(sendFillInData, 1000);
+}
+
+noble.on('discover', (peripheral) => {
+
+   	//console.log(`[Central] Found device ${peripheral.advertisement.localName} ${peripheral.address}`); 
+	if (peripheral.advertisement.localName == "M3") 
+	{
+        try
+        {
+            var result = keiserParser.parseAdvertisement(peripheral);
+			//console.log(`[Central] Found M3 device ${peripheral.advertisement.localName} ${peripheral.address} ${result.buildMajor} ${result.buildMinor}`); 
+			if (result.ordinalId == 2) {
+				console.log(`Bike ${result.ordinalId}: ${result.realTime} ${result.cadence} ${result.power} ${result.gear} ${result.duration}`); 
+				if (result.realTime) {
+					dataToSend = { 
+						rpm: result.cadence, 
+						power: result.power,
+						hr: result.heartRate,
+						speed: result.cadence * .73  // 30 cog 34 cassette for now
+					};
+					if (fillInTimer) {
+						clearTimeout(fillInTimer);
+						fillInTimer = null;
+					}
+
+					if (someoneConnected) {
+						keiserBLE.notifyFTMS(dataToSend);
+						fillInTimer = setTimeout(sendFillInData, 1000);
+					}
+				}
+			}
+        } 
+        catch { 
+            console.log("\tError parsing")
+        }
+    }
+});

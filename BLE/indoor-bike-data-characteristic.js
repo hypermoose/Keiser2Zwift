@@ -46,7 +46,7 @@ class IndoorBikeDataCharacteristic extends Bleno.Characteristic {
 
 			var index = 2;
 			if ('speed' in event) {
-				var speed = parseInt(event.speed * 100);
+				var speed = parseInt(event.speed);
 				if (DEBUG) console.log("[IndoorBikeDataCharacteristic] speed: " + speed);
 				buffer.writeInt16LE(speed, index);
 				index += 2;
@@ -55,7 +55,7 @@ class IndoorBikeDataCharacteristic extends Bleno.Characteristic {
 			if ('rpm' in event) {
 				var rpm = event.rpm;
 				if (DEBUG) console.log("[IndoorBikeDataCharacteristic] rpm: " + rpm);
-				buffer.writeInt16LE(rpm * 2, index);
+				buffer.writeInt16LE(rpm, index);
 				index += 2;
 			}
 			
