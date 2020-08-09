@@ -10,7 +10,7 @@ const KeiserBLE = require('./BLE/keiserBLE')
 
 var fillInTimer = null;
 var dataToSend = null;
-var someoneConnected = false;
+var connectedCount = 0;
 
 console.log("Starting");
 
@@ -20,11 +20,11 @@ keiserBLE.on('advertisingStart', (client) => {
 	//oled.displayBLE('Started');
 });
 keiserBLE.on('accept', (client) => {
-	someoneConnected = true;
+	connectedCount++;
 	//oled.displayBLE('Connected');
 });
 keiserBLE.on('disconnect', (client) => {
-	someoneConnected = false;
+	connectedCount--;
 	//oled.displayBLE('Disconnected');
 });
 
@@ -109,7 +109,7 @@ noble.on('discover', (peripheral) => {
 						fillInTimer = null;
 					}
 
-					if (someoneConnected) {
+					if (connectedCount > 0) {
 						keiserBLE.notifyFTMS(dataToSend);
 						fillInTimer = setTimeout(sendFillInData, 1000);
 					}
