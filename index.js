@@ -77,7 +77,7 @@ noble.on('stateChange', async (state) => {
 });
 
 function sendFillInData() {
-	if (!dataToSend || !someoneConnected) {
+	if (!dataToSend || (connectedCount < 1)) {
 		console.log("Aborting nothing to send");
 	}
 
