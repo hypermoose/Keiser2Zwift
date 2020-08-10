@@ -1,0 +1,14 @@
+[Unit]
+Description=KeiserM3
+After=network.target
+
+[Service]
+ExecStart=/home/pi/code.keiser/run.sh
+WorkingDirectory=/home/pi/code/keiser
+Type=idle
+Restart=always
+StandardOutput=syslog
+SyslogIdentifier=keiserm3
+
+[Install]
+WantedBy=multi-user.target

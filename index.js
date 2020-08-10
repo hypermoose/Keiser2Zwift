@@ -73,6 +73,11 @@ noble.on('stateChange', async (state) => {
     if (state === 'poweredOn') {
     	console.log(`[Central] starting scan`);
         await noble.startScanningAsync(null, true);
+    } else if (state === 'poweredOff') {
+		console.log('No adapter detected, exiting in 5 seconds');
+		setTimeout(() => {
+			process.exit();	
+		}, 5000);
     }
 });
 
