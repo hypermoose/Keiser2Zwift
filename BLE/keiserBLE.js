@@ -5,14 +5,14 @@ const FitnessMachineService = require('./ftms-service');
 
 class KeiserBLE extends EventEmitter {
 
-	constructor(serverCallback) {
+	constructor() {
 		super();
 
 		this.name = "KeiserM3";
 		process.env['BLENO_DEVICE_NAME'] = this.name; 
 
 		this.csp = new CyclingPowerService();
-		this.ftms = new FitnessMachineService(serverCallback); 
+		this.ftms = new FitnessMachineService(); 
 
 		let self = this;
 		console.log(`[${this.name} starting]`);

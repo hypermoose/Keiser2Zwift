@@ -14,7 +14,7 @@ var connectedCount = 0;
 
 console.log("Starting");
 
-var keiserBLE = new KeiserBLE(serverCallback);
+var keiserBLE = new KeiserBLE();
 
 keiserBLE.on('advertisingStart', (client) => {
 	//oled.displayBLE('Started');
@@ -27,46 +27,6 @@ keiserBLE.on('disconnect', (client) => {
 	connectedCount--;
 	//oled.displayBLE('Disconnected');
 });
-
-function serverCallback(message, ...args) {
-	var success = false;
-	switch (message) {
-	case 'reset':
-		console.log('[server.js] - Bike reset');
-		//kettlerUSB.restart();
-		///bikeState.restart();
-		success = true;
-		break;
-
-	case 'control':
-		console.log('[server.js] - Bike is under control');
-		//oled.setStatus(1);
-		//bikeState.setControl();
-		success = true;
-		break;
-
-	case 'power':
-		// console.log('[server.js] - Bike in ERG Mode');
-		//bikeState.setTargetPower(args[0]);
-		success = true;
-		break;
-
-	case 'simulation': // SIM Mode - calculate power based on physics
-		//console.log('[server.js] - Bike in SIM Mode');
-		/*var windspeed = Number(args[0]);
-		var grade = Number(args[1]);
-		var crr = Number(args[2]);
-		var cw = Number(args[3]);
-		// console.log('[server.js] - Bike SIM Mode - [wind]: ' + (windspeed * 3.6).toFixed(1) + 'hm/h [grade]: ' + grade.toFixed(1) + '% [crr]: ' + crr + ' [cw]: ' + cw)
-
-        bikeState.setExternalCondition(windspeed, grade, crr, cw);
-        */
-		// nothing special
-		success = true;
-		break;
-	}
-	return success;
-};
 
 noble.on('stateChange', async (state) => {
     console.log(`[Central] State changed to ${state}`);
