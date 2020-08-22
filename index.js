@@ -60,7 +60,7 @@ noble.on('discover', (peripheral) => {
         {
             var result = keiserParser.parseAdvertisement(peripheral);
 			//console.log(`[Central] Found M3 device ${peripheral.advertisement.localName} ${peripheral.address} ${result.buildMajor} ${result.buildMinor}`); 
-			if (result.ordinalId == 2) {
+			if (result.ordinalId == 1) {
 				console.log(`Bike ${result.ordinalId}: ${result.realTime} ${result.cadence} ${result.power} ${result.gear} ${result.duration}`); 
 				if (result.realTime) {
 					dataToSend = { 

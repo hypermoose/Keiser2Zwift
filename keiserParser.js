@@ -69,7 +69,7 @@ const encodeStringToBytes = (rawString) => {
       broadcast.realTime = dataType === 0 || (dataType > 128 && dataType < 255)
   
       broadcast.ordinalId = data[index + 1]
-      if (broadcast.ordinalId <= 0 || broadcast.ordinalId > 200) {
+      if (broadcast.ordinalId < 0 || broadcast.ordinalId > 200) {
         throw new Error('Invalid machine id')
       }
   
