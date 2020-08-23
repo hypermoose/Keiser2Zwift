@@ -11,6 +11,7 @@ const KeiserBLE = require('./BLE/keiserBLE')
 var fillInTimer = null;
 var dataToSend = null;
 var connectedCount = 0;
+var targetDeviceId = -1;
 
 console.log("Starting");
 
@@ -58,9 +59,18 @@ noble.on('discover', (peripheral) => {
 	{
         try
         {
-            var result = keiserParser.parseAdvertisement(peripheral);
-			//console.log(`[Central] Found M3 device ${peripheral.advertisement.localName} ${peripheral.address} ${result.buildMajor} ${result.buildMinor}`); 
-			if (result.ordinalId == 1) {
+			var result = keiserParser.parseAdvertisement(peripheral);
+			if (targetDeviceId == -1) {
+				if (result.realTime) {
+					console.log(`Attaching to bike id ${result.ordinalId}`);
+					targetDeviceId = result.ordinalId;
+					keiserBLE.setDeviceId(targetDeviceId);
+				} else {
+					return;
+				}
+			} 
+			
+			if (result.ordinalId == targetDeviceId) {
 				console.log(`Bike ${result.ordinalId}: ${result.realTime} ${result.cadence} ${result.power} ${result.gear} ${result.duration}`); 
 				if (result.realTime) {
 					dataToSend = { 
@@ -81,8 +91,9 @@ noble.on('discover', (peripheral) => {
 				}
 			}
         } 
-        catch { 
-            console.log("\tError parsing")
+        catch (err) { 
+            console.log(`\tError parsing: ${err}`);
+            console.log(`\t ${err.stack}`);
         }
     }
 });

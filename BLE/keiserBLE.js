@@ -3,13 +3,15 @@ const EventEmitter = require('events');
 const CyclingPowerService = require('./cycling-power-service');
 const FitnessMachineService = require('./ftms-service');
 
+var keiserDeviceId = -1;
+var isPoweredOn = false;
+
 class KeiserBLE extends EventEmitter {
 
 	constructor() {
 		super();
 
-		this.name = "KeiserM3";
-		process.env['BLENO_DEVICE_NAME'] = this.name; 
+		this.setName();		
 
 		this.csp = new CyclingPowerService();
 		this.ftms = new FitnessMachineService(); 
@@ -23,11 +25,11 @@ class KeiserBLE extends EventEmitter {
 			self.emit('stateChange', state);
 
 			if (state === 'poweredOn') {
-				bleno.startAdvertising(self.name, [self.csp.uuid
-				, self.ftms.uuid
-				]);
+				isPoweredOn = true;
+				this.checkStartConditions();
 			} else {
 				console.log('Stopping...');
+				isPoweredOn = false;
 				bleno.stopAdvertising();
 			}
 		});
@@ -82,6 +84,30 @@ class KeiserBLE extends EventEmitter {
 		this.csp.notify(event);
 		this.ftms.notify(event);
 	};
+
+	setDeviceId(deviceId) {
+		keiserDeviceId = deviceId;
+		this.setName();
+		this.checkStartConditions();
+	}
+
+	setName() {
+		if (keiserDeviceId == -1) {
+			this.name = "KeiserM3";
+		} else {
+			this.name = "KeiserM3-" + keiserDeviceId;
+		}
+
+		process.env['BLENO_DEVICE_NAME'] = this.name; 
+	}
+
+	checkStartConditions() {
+		if (isPoweredOn && keiserDeviceId != -1) {
+			bleno.startAdvertising(this.name, [this.csp.uuid
+			, this.ftms.uuid
+			]);
+		}
+	}
 };
 
 module.exports = KeiserBLE;
