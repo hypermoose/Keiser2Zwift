@@ -1,7 +1,7 @@
 # Keiser2Zwift
 
 Use your Keiser M3 bike with apps like Zwift without buying a converter from Keiser which never really worked for me.  This project was built to use make use of a Raspberry pi
-with 2 bluetooth adapters.  Other system may work but your on your own to get it setup.  Two bluetooth adapters are required to make this work.  I use the built in one on a Raspberry Pi 3/4 or the Pi Zero W
+with 2 bluetooth adapters.  Other systems may work but your on your own to get it setup.  Two bluetooth adapters are required to make this work.  I use the built in one on a Raspberry Pi 3/4 or the Pi Zero W
 and an additional one plugged into the usb port.   The steps to install are below.
 
 # USB bluetooth adapters known to work
