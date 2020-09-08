@@ -36,7 +36,17 @@ Any one available from Amazon with linux support should work but I have tried th
   
 # Setting up to always run
 You can setup the program to run at Pi boot time by doing the following steps:
-1. 
+1. Edit the keiser.service file in the root of this project to change the path if you didnt take my suggestion.
+2. Copy the service definition into the correct location
+      * ```sudo cp keiser.service /etc/systemd/system```
+3. Enable the service
+      * ```sudo systemctl enable keiser```
+4. Start the service (Make sure you aren't still manually running the project using npm)
+      * ```sudo systemctl start keiser```
+5. Verify it started
+      * ```systemctl status keiser```
+6. Reboot the system and verify that the service started automatically using step 5
+
 # Thanks
 I leveraged several other great projects to build this.  They are:
 - Bleno: https://github.com/abandonware/bleno
