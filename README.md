@@ -29,10 +29,26 @@ Any one available from Amazon with linux support should work but I have tried th
     * ```sudo hciconfig hci1 up```
 9. Verify that you see two devices when you run:
     * ``` hcitool dev```
-10. Start this project manually.  You should see log messages that indicate its looking for an M3i.
-    * ``` npm start```
+10. Start this project manually as root.  You should see log messages that indicate its looking for an M3i.
+    * ``` sudo npm start```
 11. Wake up your bike and do a few revolutions of the pedals.  You should see log messages indicating that its connected to that bike
 12. Launch Zwift and connect to the Power meter whose name starts with KeiserM3-<your bike id>.  Then connect to the Cadence sensor.   Enjoy
+   
+### Running without root/sudo
+
+Run the following command:
+
+```sh
+sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)
+```
+
+This grants the ```node``` binary ```cap_net_raw``` privileges, so it can start/stop BLE advertising.
+
+__Note:__ The above command requires ```setcap``` to be installed, it can be installed using the following:
+
+ * apt: ```sudo apt-get install libcap2-bin```
+ * yum: ```su -c \'yum install libcap2-bin\'```
+ 
   
 # Setting up to always run
 You can setup the program to run at Pi boot time by doing the following steps:
