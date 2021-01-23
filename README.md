@@ -63,6 +63,10 @@ You can setup the program to run at Pi boot time by doing the following steps:
       * ```systemctl status keiser```
 6. Reboot the system and verify that the service started automatically using step 5
 
+# Issues with USB adapters at system boot
+Several people have reported issues at system boot with both adapters being recognized.  A known work around by @djwasser is described in issue: https://github.com/hypermoose/Keiser2Zwift/issues/2
+
+
 # Thanks
 I leveraged several other great projects to build this.  They are:
 - Bleno: https://github.com/abandonware/bleno
