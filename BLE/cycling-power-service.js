@@ -9,8 +9,8 @@ class CyclingPowerService extends Bleno.PrimaryService {
   constructor() {
     let powerMeasurement = new CyclingPowerMeasurementCharacteristic();
     super({
-        // uuid: '1818',
-		uuid: '1515',
+        uuid: '1818',
+	//uuid: '1515',
         characteristics: [
           powerMeasurement,
           new StaticReadCharacteristic('2A65', 'Cycling Power Feature', [0x08, 0, 0, 0]), // 0x08 - crank revolutions
