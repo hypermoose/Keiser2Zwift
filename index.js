@@ -2,7 +2,7 @@
 process.env['NOBLE_MULTI_ROLE'] = 1
 process.env['NOBLE_REPORT_ALL_HCI_EVENTS'] = 1
 process.env['BLENO_HCI_DEVICE_ID'] = 0
-process.env['NOBLE_HCI_DEVICE_ID'] = 1
+process.env['NOBLE_HCI_DEVICE_ID'] = 0
 
 //const noble = require('@abandonware/noble');
 const noble = undefined
@@ -19,15 +19,28 @@ console.log("Starting script");
 var keiserBLE = new KeiserBLE();
 
 keiserBLE.on('advertisingStart', (client) => {
-	//oled.displayBLE('Started');
+	console.log("Advertising started")
 });
 keiserBLE.on('accept', (client) => {
 	connectedCount++;
-	//oled.displayBLE('Connected');
+	console.log("Fitness client app connected")
 });
 keiserBLE.on('disconnect', (client) => {
 	connectedCount--;
-	//oled.displayBLE('Disconnected');
+	console.log("Fitness client app disconnected")
+});
+keiserBLE.on('stateChange', (state) => {
+	// Test code only if not using a real Keiser
+	if (state === 'poweredOn' && !noble) {
+		keiserBLE.setDeviceId(1);
+
+		var testEvent = {
+			power: 10,
+			rpm: 100,
+			speed: 10
+		}
+		keiserBLE.notifyFTMS(testEvent)
+	}
 });
 
 if (noble) {
@@ -101,15 +114,4 @@ if (noble) {
 			}
 		}
 	});
-
-// Test code to simulate a bike for simplified debugging
-} else {
-	keiserBLE.setDeviceId(1);
-
-	var testEvent = {
-		power: 10,
-		rpm: 100,
-		speed: 10
-	}
-	keiserBLE.notifyFTMS(testEvent)
 }
