@@ -101,6 +101,15 @@ if (noble) {
 			}
 		}
 	});
+
+// Test code to simulate a bike for simplified debugging
 } else {
-	
+	keiserBLE.setDeviceId(1);
+
+	var testEvent = {
+		power: 10,
+		rpm: 100,
+		speed: 10
+	}
+	keiserBLE.notifyFTMS(testEvent)
 }
