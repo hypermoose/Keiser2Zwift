@@ -5,6 +5,7 @@ const FitnessMachineService = require('./ftms-service');
 
 var keiserDeviceId = -1;
 var isPoweredOn = false;
+var isAdvertising = false;
 
 class KeiserBLE extends EventEmitter {
 
@@ -26,11 +27,13 @@ class KeiserBLE extends EventEmitter {
 
 			if (state === 'poweredOn') {
 				isPoweredOn = true;
-				this.checkStartConditions();
+				this.checkStartConditions(); 
+			//} else if (state === 'resetting') {
 			} else {
 				console.log('Stopping...');
 				isPoweredOn = false;
 				bleno.stopAdvertising();
+				isAdvertising = false;
 			}
 		});
 
@@ -39,6 +42,7 @@ class KeiserBLE extends EventEmitter {
 			self.emit('advertisingStart', error);
 
 			if (!error) {
+				isAdvertising = true;
 				bleno.setServices([self.csp
 				, self.ftms
 				], 
@@ -50,11 +54,13 @@ class KeiserBLE extends EventEmitter {
 
 		bleno.on('advertisingStartError', () => {
 			console.log(`[${this.name} advertisingStartError] advertising stopped`);
+			isAdvertising = false;
 			self.emit('advertisingStartError');
 		});
 
 		bleno.on('advertisingStop', error => {
 			console.log(`[${this.name} advertisingStop] ${(error ? 'error ' + error : 'success')}`);
+			isAdvertising = false;
 			self.emit('advertisingStop');
 		});
 
@@ -102,7 +108,7 @@ class KeiserBLE extends EventEmitter {
 	}
 
 	checkStartConditions() {
-		if (isPoweredOn && keiserDeviceId != -1) {
+		if (isPoweredOn && keiserDeviceId != -1 && !isAdvertising) {
 			bleno.startAdvertising(this.name, [this.csp.uuid
 			, this.ftms.uuid
 			]);
