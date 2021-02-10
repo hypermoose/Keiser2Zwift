@@ -22,8 +22,6 @@ class KeiserBLE extends EventEmitter {
 
 		bleno.on('stateChange', (state) => {
 			console.log(`[${this.name} stateChange] new state: ${state}`);
-			
-			self.emit('stateChange', state);
 
 			if (state === 'poweredOn') {
 				isPoweredOn = true;
@@ -35,11 +33,12 @@ class KeiserBLE extends EventEmitter {
 				bleno.stopAdvertising();
 				isAdvertising = false;
 			}
+
+			self.emit('stateChange', state);
 		});
 
 		bleno.on('advertisingStart', (error) => {
 			console.log(`[${this.name} advertisingStart] ${(error ? 'error ' + error : 'success')}`);
-			self.emit('advertisingStart', error);
 
 			if (!error) {
 				isAdvertising = true;
@@ -50,6 +49,8 @@ class KeiserBLE extends EventEmitter {
 					console.log(`[${this.name} setServices] ${(error ? 'error ' + error : 'success')}`);
 				});
 			}
+
+			self.emit('advertisingStart', error);
 		});
 
 		bleno.on('advertisingStartError', () => {
@@ -70,8 +71,8 @@ class KeiserBLE extends EventEmitter {
 
 		bleno.on('accept', (clientAddress) => {
 			console.log(`[${this.name} accept] Client: ${clientAddress}`);
-			self.emit('accept', clientAddress);
 			bleno.updateRssi();
+			self.emit('accept', clientAddress);
 		});
 
 		bleno.on('disconnect', (clientAddress) => {

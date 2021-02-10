@@ -33,13 +33,7 @@ keiserBLE.on('stateChange', (state) => {
 	// Test code only if not using a real Keiser
 	if (state === 'poweredOn' && !noble) {
 		keiserBLE.setDeviceId(1);
-
-		var testEvent = {
-			power: 10,
-			rpm: 100,
-			speed: 10
-		}
-		keiserBLE.notifyFTMS(testEvent)
+		sendTestData();
 	}
 });
 
@@ -56,6 +50,18 @@ if (noble) {
 			}, 5000);
 		}
 	});
+}
+
+function sendTestData() {
+
+	var testEvent = {
+		power: 100,
+		rpm: 85,
+		speed: 15
+	}
+	keiserBLE.notifyFTMS(testEvent)
+
+	setTimeout(() => { sendTestData(); }, 1000);
 }
 
 function sendFillInData() {
