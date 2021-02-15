@@ -15,7 +15,7 @@ class CyclingSpeedService extends Bleno.PrimaryService {
         ]
     });
 
-    this.speedMeasurement = speecMeasurement;
+    this.speedMeasurement = speedMeasurement;
   }
 
   notify(event) {

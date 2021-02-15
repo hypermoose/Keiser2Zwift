@@ -1,6 +1,6 @@
 
 var Bleno = require('@abandonware/bleno');
-var DEBUG = false;
+var DEBUG = true;
 
 // Spec
 //https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.cycling_power_measurement.xml

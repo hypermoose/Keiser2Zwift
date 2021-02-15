@@ -18,8 +18,10 @@ console.log("Starting script");
 
 var keiserBLE = new KeiserBLE();
 
-keiserBLE.on('advertisingStart', (client) => {
-	console.log("Advertising started")
+keiserBLE.on('advertisingStart', (error) => {
+	if (!error) {
+		console.log("Advertising started")
+	}
 });
 keiserBLE.on('accept', (client) => {
 	connectedCount++;
