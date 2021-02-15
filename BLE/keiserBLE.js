@@ -1,6 +1,7 @@
 const bleno = require('@abandonware/bleno');
 const EventEmitter = require('events');
 const CyclingPowerService = require('./cycling-power-service');
+const CyclingSpeedService = require('./cycling-speed-service');
 const FitnessMachineService = require('./ftms-service');
 
 var keiserDeviceId = -1;
@@ -15,6 +16,7 @@ class KeiserBLE extends EventEmitter {
 		this.setName();		
 
 		this.csp = new CyclingPowerService();
+		this.css = new CyclingSpeedService();
 		this.ftms = new FitnessMachineService(); 
 
 		let self = this;
@@ -42,8 +44,7 @@ class KeiserBLE extends EventEmitter {
 
 			if (!error) {
 				isAdvertising = true;
-				bleno.setServices([self.csp
-				, self.ftms
+				bleno.setServices([self.csp, self.ftms, self.css
 				], 
 				(error) => {
 					console.log(`[${this.name} setServices] ${(error ? 'error ' + error : 'success')}`);
@@ -89,6 +90,7 @@ class KeiserBLE extends EventEmitter {
 	// notifiy BLE services
 	notifyFTMS(event) {
 		this.csp.notify(event);
+		this.css.notify(event);
 		this.ftms.notify(event);
 	};
 
@@ -110,9 +112,7 @@ class KeiserBLE extends EventEmitter {
 
 	checkStartConditions() {
 		if (isPoweredOn && keiserDeviceId != -1 && !isAdvertising) {
-			bleno.startAdvertising(this.name, [this.csp.uuid
-			, this.ftms.uuid
-			]);
+			bleno.startAdvertising(this.name, [this.csp.uuid, this.css.uuid, this.ftms.uuid]);
 		}
 	}
 };
