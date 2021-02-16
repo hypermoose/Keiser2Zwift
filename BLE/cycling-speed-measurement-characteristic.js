@@ -12,17 +12,8 @@ class CyclingSpeedMeasurementCharacteristic extends  Bleno.Characteristic {
       properties: ['notify'],
       descriptors: [
         new Bleno.Descriptor({
-					uuid: '2901',
-					value: 'CSC Measurement'
-				}),
-        new Bleno.Descriptor({
           // Client Characteristic Configuration
           uuid: '2902',
-          value: Buffer.alloc(2)
-        }),
-        new Bleno.Descriptor({
-          // Server Characteristic Configuration
-          uuid: '2903',
           value: Buffer.alloc(2)
         })
       ]
