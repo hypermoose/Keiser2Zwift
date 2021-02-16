@@ -50,7 +50,7 @@ class CyclingSpeedMeasurementCharacteristic extends  Bleno.Characteristic {
       this._lastNotify = now();
       let rpmChunk = (event.rpm / 60.0) * deltaS;
       this._cumulativeRevs += rpmChunk;
-      let eventDeltaS = (now() = this._eventTimeBase) / 1000.0;
+      var eventDeltaS = (now() = this._eventTimeBase) / 1000.0;
       if (eventDeltaS > 64) {
         this._eventTimeBase = now();
         while (eventDeltaS > 64) {
@@ -64,7 +64,7 @@ class CyclingSpeedMeasurementCharacteristic extends  Bleno.Characteristic {
       // 00000001 - 1   - 0x001 - Wheel Revolution Data Present
       // 00000010 - 2   - 0x002 - Crank Revolution Data Present
       buffer.writeUInt8(0x02, 0);  // Flag: Have Crank Revolution Data
-      buffer.writeUInt16LE(1, Match.round(rpmChunk));  // Cumulative crank revolutions
+      buffer.writeUInt16LE(1, Math.round(rpmChunk));  // Cumulative crank revolutions
       buffer.writeUint16LE(2, Math.round(eventTime))  // Last Crank Event Time  1/1024 of a second
 	   
       this._updateValueCallback(buffer);

@@ -44,7 +44,7 @@ class KeiserBLE extends EventEmitter {
 
 			if (!error) {
 				isAdvertising = true;
-				bleno.setServices([self.csp, self.ftms],//, self.css], 
+				bleno.setServices([self.csp, self.ftms, self.css], 
 				(error) => {
 					console.log(`[${this.name} setServices] ${(error ? 'error ' + error : 'success')}`);
 				});
@@ -111,7 +111,7 @@ class KeiserBLE extends EventEmitter {
 
 	checkStartConditions() {
 		if (isPoweredOn && keiserDeviceId != -1 && !isAdvertising) {
-			bleno.startAdvertising(this.name, [this.csp.uuid, this.ftms.uuid]);//, this.css.uuid]);
+			bleno.startAdvertising(this.name, [this.csp.uuid, this.ftms.uuid, this.css.uuid]);
 		}
 	}
 };
