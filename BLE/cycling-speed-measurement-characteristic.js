@@ -36,36 +36,39 @@ class CyclingSpeedMeasurementCharacteristic extends  Bleno.Characteristic {
       return this.RESULT_SUCCESS;;
     }
 
-  
     if (this._updateValueCallback) {
       if (DEBUG) console.log("[speedService] Notify, rpm: " + event.rpm);
 
-      if (this._cumulativeRevs = -1) {
+      let currentTime = now();
+
+      if (this._cumulativeRevs == -1) {
         this._cumulativeRevs = 0;
-        this._lastNotify = now();
-        this._eventTimeBase = now();
+        this._lastNotify = currentTime;
+        this._eventTimeBase = currentTime;
       }
 
-      let deltaS = (now() - this._lastNotify) / 1000.0;
-      this._lastNotify = now();
-      let rpmChunk = (event.rpm / 60.0) * deltaS;
+      let deltaS = (currentTime - this._lastNotify) / 1000.0;
+      this._lastNotify = currentTime;
+      let rpmChunk = Math.round((event.rpm / 60.0) * deltaS);
       this._cumulativeRevs += rpmChunk;
-      var eventDeltaS = (now() = this._eventTimeBase) / 1000.0;
-      if (eventDeltaS > 64) {
-        this._eventTimeBase = now();
-        while (eventDeltaS > 64) {
-          eventDeltaS -= 64;
+      var eventDeltaS = (currentTime - this._eventTimeBase) / 1000.0;
+
+      var eventTime = Math.round(eventDeltaS * 1024);
+      let maxTime = 63 * 1024;
+      if (eventTime > maxTime) {
+        this._eventTimeBase = currentTime;
+        while (eventTime > maxTime) {
+          eventTime -= maxTime;
         }
       }
-      let eventTime = eventDeltaS / 1024;
 
       var buffer = new Buffer.alloc(11);
       // flags
       // 00000001 - 1   - 0x001 - Wheel Revolution Data Present
       // 00000010 - 2   - 0x002 - Crank Revolution Data Present
       buffer.writeUInt8(0x02, 0);  // Flag: Have Crank Revolution Data
-      buffer.writeUInt16LE(1, Math.round(rpmChunk));  // Cumulative crank revolutions
-      buffer.writeUint16LE(2, Math.round(eventTime))  // Last Crank Event Time  1/1024 of a second
+      buffer.writeUInt16LE(this._cumulativeRevs, 7);  // Cumulative crank revolutions
+      buffer.writeUInt16LE(eventTime, 9)  // Last Crank Event Time  1/1024 of a second
 	   
       this._updateValueCallback(buffer);
     }
