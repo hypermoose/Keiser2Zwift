@@ -62,13 +62,13 @@ class CyclingSpeedMeasurementCharacteristic extends  Bleno.Characteristic {
         }
       }
 
-      var buffer = new Buffer.alloc(11);
+      var buffer = new Buffer.alloc(8);
       // flags
       // 00000001 - 1   - 0x001 - Wheel Revolution Data Present
       // 00000010 - 2   - 0x002 - Crank Revolution Data Present
-      buffer.writeUInt8(0x02, 0);  // Flag: Have Crank Revolution Data
-      buffer.writeUInt16LE(this._cumulativeRevs, 7);  // Cumulative crank revolutions
-      buffer.writeUInt16LE(eventTime, 9)  // Last Crank Event Time  1/1024 of a second
+      buffer.writeUInt16LE(0x0002, 0);  // Flag: Have Crank Revolution Data
+      buffer.writeUInt16LE(this._cumulativeRevs, 2);  // Cumulative crank revolutions
+      buffer.writeUInt16LE(eventTime, 4)  // Last Crank Event Time  1/1024 of a second
 	   
       this._updateValueCallback(buffer);
     }
